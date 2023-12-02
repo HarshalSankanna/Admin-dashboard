@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'reactstrap';
 import "./style.css"
 
-const UserRow = ({ user, onEdit, onDelete, onSelect }) => {
+const UserRow = ({ user, onEdit, onDelete, onSelect, style }) => {
   const { id, name, email, role, selected } = user;
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({ name, email, role });
@@ -21,7 +21,7 @@ const UserRow = ({ user, onEdit, onDelete, onSelect }) => {
   };
 
   return (
-    <tr key={id} style={{ backgroundColor: selected ? '#f0f0f0' : 'transparent' }}>
+    <tr key={id} style={style}>
       <td>
         <input type="checkbox" checked={selected} onChange={() => onSelect(id)} />
       </td>

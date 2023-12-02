@@ -111,6 +111,7 @@ const UserTable = () => {
         <tbody>
           {currentItems.map(user => (
             <UserRow
+              className={user.selected ? 'selected-row' : ''}
               key={user.id}
               user={user}
               onEdit={handleEdit}
@@ -120,7 +121,7 @@ const UserTable = () => {
           ))}
         </tbody>
       </Table>
-      <Pagination>
+      <Pagination className='navigation-btns'>
         <PaginationItem>
           <PaginationLink
             first
@@ -153,7 +154,6 @@ const UserTable = () => {
           />
         </PaginationItem>
       </Pagination>
-      <Nav></Nav>
     </div>
   );
 };
