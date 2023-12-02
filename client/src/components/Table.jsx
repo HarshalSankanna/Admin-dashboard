@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchUserData } from '../api/api';
 import UserRow from './UserRow'; 
+import SearchBar from './SearchBar';
 
 const Table = () => {
   const [userData, setUserData] = useState([]);
+  const [originalUserData, setOriginalUserData] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [filteredUserData, setFilteredUserData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +17,7 @@ const Table = () => {
         const data = await fetchUserData();
         const userDataWithSelection = data.map(user => ({ ...user, selected: false }));
         setUserData(userDataWithSelection);
+        setOriginalUserData(userDataWithSelection);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -24,7 +28,9 @@ const Table = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = userData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = (filteredUserData.length > 0 ? filteredUserData : userData)
+    .slice(indexOfFirstItem, indexOfLastItem);
+
 
   // Handle changing page
   const paginate = pageNumber => setCurrentPage(pageNumber);
@@ -70,8 +76,19 @@ const Table = () => {
     setUserData(updatedUserData);
   };
 
+  const handleSearch = (searchTerm) => {
+    const filteredData = originalUserData.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredUserData(filteredData); 
+    setCurrentPage(1); 
+  };
+
   return (
     <div>
+      <SearchBar onSearch={handleSearch} />
       <button onClick={handleDelete} style={{ float: 'right' }}>
         Delete Selected
       </button>
@@ -110,6 +127,7 @@ const Table = () => {
         <button onClick={() => paginate(currentPage + 1)}>Next</button>
         <button onClick={() => paginate(Math.ceil(userData.length / itemsPerPage))}>Last</button>
       </div>
+
     </div>
   );
 };
