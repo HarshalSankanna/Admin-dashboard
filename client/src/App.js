@@ -1,10 +1,10 @@
 import "./App.css";
-import UserRow from "./components/UserRow";
+import Table from "./components/Table";
 
 function App() {
   return (
     <div className="App">
-      <UserRow />
+      <Table />
     </div>
   );
 }
