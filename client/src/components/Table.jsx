@@ -5,6 +5,8 @@ import UserRow from './UserRow';
 const Table = () => {
   const [userData, setUserData] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +21,13 @@ const Table = () => {
 
     fetchData();
   }, []);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = userData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Handle changing page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
 
   const handleEdit = (id, editedData) => {
     const updatedUserData = userData.map(user => {
@@ -39,10 +48,17 @@ const Table = () => {
   };
 
   const handleSelectAll = () => {
-    const updatedUserData = userData.map(user => ({ ...user, selected: !selectAll }));
+    const updatedCurrentItems = currentItems.map(user => ({ ...user, selected: !selectAll }));
+    const updatedUserData = userData.map(user => {
+      const index = updatedCurrentItems.findIndex(item => item.id === user.id);
+      if (index !== -1) {
+        return updatedCurrentItems[index];
+      }
+      return user;
+    });
     setUserData(updatedUserData);
     setSelectAll(prevSelectAll => !prevSelectAll);
-  };
+  };  
 
   const handleSelect = (id) => {
     const updatedUserData = userData.map(user => {
@@ -71,7 +87,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {userData.map(user => (
+          {currentItems.map(user => (
             <UserRow
               key={user.id}
               user={user}
@@ -82,6 +98,18 @@ const Table = () => {
           ))}
         </tbody>
       </table>
+      <div>
+        <button onClick={() => paginate(1)}>First</button>
+        <button onClick={() => paginate(currentPage - 1)}>Previous</button>
+        
+        {Array.from({ length: Math.ceil(userData.length / itemsPerPage) }).map((_, index) => (
+          <button key={index} onClick={() => paginate(index + 1)}>
+            {index + 1}
+          </button>
+        ))}
+        <button onClick={() => paginate(currentPage + 1)}>Next</button>
+        <button onClick={() => paginate(Math.ceil(userData.length / itemsPerPage))}>Last</button>
+      </div>
     </div>
   );
 };
