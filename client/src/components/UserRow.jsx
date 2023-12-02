@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Button } from 'reactstrap';
+import "./style.css"
 
 const UserRow = ({ user, onEdit, onDelete, onSelect }) => {
   const { id, name, email, role, selected } = user;
@@ -44,15 +46,13 @@ const UserRow = ({ user, onEdit, onDelete, onSelect }) => {
           <span>{role}</span>
         )}
       </td>
-      <td>
+      <td className='action-buttons'>
         {isEditing ? (
-          <button onClick={handleSaveClick}>Save</button>
+          <Button onClick={handleSaveClick} className='save' color="success" size="sm" outline>Save</Button>
         ) : (
-          <button onClick={handleEditClick}>Edit</button>
+          <Button onClick={handleEditClick} className='edit' size="sm" outline>Edit</Button>
         )}
-      </td>
-      <td>
-        <button onClick={() => onDelete(id)}>Delete</button>
+        <Button onClick={() => onDelete(id)} className='delete' color="danger" size="sm" outline>Delete</Button>
       </td>
     </tr>
   );

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { fetchUserData } from '../api/api';
 import UserRow from './UserRow'; 
 import SearchBar from './SearchBar';
+import { Nav, NavItem, Button, Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import "./style.css"
 
-const Table = () => {
+const UserTable = () => {
   const [userData, setUserData] = useState([]);
   const [originalUserData, setOriginalUserData] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -88,11 +90,13 @@ const Table = () => {
 
   return (
     <div>
-      <SearchBar onSearch={handleSearch} />
-      <button onClick={handleDelete} style={{ float: 'right' }}>
-        Delete Selected
-      </button>
-      <table>
+      <Nav className='search-delete'>
+      <NavItem><SearchBar onSearch={handleSearch} /></NavItem>
+      <NavItem>
+        <Button onClick={handleDelete} color="danger" size="sm">Delete Selected</Button>
+      </NavItem>
+      </Nav>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>
@@ -101,6 +105,7 @@ const Table = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -114,22 +119,47 @@ const Table = () => {
             />
           ))}
         </tbody>
-      </table>
-      <div>
-        <button onClick={() => paginate(1)}>First</button>
-        <button onClick={() => paginate(currentPage - 1)}>Previous</button>
-        
-        {Array.from({ length: Math.ceil(userData.length / itemsPerPage) }).map((_, index) => (
-          <button key={index} onClick={() => paginate(index + 1)}>
-            {index + 1}
-          </button>
-        ))}
-        <button onClick={() => paginate(currentPage + 1)}>Next</button>
-        <button onClick={() => paginate(Math.ceil(userData.length / itemsPerPage))}>Last</button>
-      </div>
-
+      </Table>
+      <Pagination>
+        <PaginationItem>
+          <PaginationLink
+            first
+            onClick={() => paginate(1)} className='first-page'
+          />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink
+            onClick={() => paginate(currentPage - 1)} className='previous-page'
+            previous
+          />
+        </PaginationItem>
+          {Array.from({ length: Math.ceil(userData.length / itemsPerPage) }).map((_, index) => (
+            <PaginationItem key={index}>
+              <PaginationLink onClick={() => paginate(index + 1)}>
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+        <PaginationItem>
+          <PaginationLink
+            onClick={() => paginate(currentPage + 1)} className='next-page' 
+            next
+          />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink
+            onClick={() => paginate(Math.ceil(userData.length / itemsPerPage))} className='last-page'
+            last
+          />
+        </PaginationItem>
+      </Pagination>
+      <Nav></Nav>
     </div>
   );
 };
 
-export default Table;
+export default UserTable;
+
+
+
+
